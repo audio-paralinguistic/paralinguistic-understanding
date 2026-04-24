@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParA-LLM: A Unified Approach to Paralinguistic and Acoustic Speech Understanding</title>
+    <meta name="description" content="ParA-LLM — a framework for paralinguistic and acoustic understanding with 22-feature taxonomy, 1.2M+ audio–QA pairs, and ParA-Bench benchmark.">
+    <meta name="robots" content="noindex, nofollow">
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <h3>ParA-LLM</h3>
+            </div>
+            <div class="nav-links">
+                <a href="#abstract">Abstract</a>
+                <a href="#contributions">Contributions</a>
+                <a href="#pipeline">Pipeline</a>
+                <a href="#methodology">Method</a>
+                <a href="#results">Results</a>
+                <a href="#qualitative">Qualitative</a>
+                <a href="#applications">Applications</a>
+                <a href="#bibtex">Citation</a>
+                <span class="nav-cta nav-cta-placeholder" title="Add public repository after release">Code</span>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>ParA-LLM: A Unified Approach to<br><span class="highlight">Paralinguistic</span> and <span class="highlight">Acoustic</span> Speech Understanding</h1>
+
+                <div class="hero-buttons">
+                    <a href="#bibtex" class="btn btn-primary" title="Link to PDF or arXiv when allowed">
+                        <i class="fas fa-file-pdf"></i> Paper
+                    </a>
+                    <span class="btn btn-secondary btn-placeholder" title="Optional: set href after de-anonymization">
+                        <i class="fas fa-globe"></i> Project
+                    </span>
+                    <span class="btn btn-secondary btn-placeholder" title="Optional: set href after de-anonymization">
+                        <i class="fab fa-github"></i> Code
+                    </span>
+                    <a href="#parabench" class="btn btn-secondary">
+                        <i class="fas fa-balance-scale"></i> ParA-Bench
+                    </a>
+                </div>
+
+                <div class="hero-stats">
+                    <div class="stat">
+                        <span class="stat-number">+7.5%</span>
+                        <span class="stat-label">abs. gain vs GPT-4o-Audio (ParA-Bench overall)</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">1.2M+</span>
+                        <span class="stat-label">Audio–QA training pairs</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-number">6,000</span>
+                        <span class="stat-label">ParA-Bench MCQ questions</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="abstract" class="section">
+        <div class="container">
+            <h2>Abstract</h2>
+            <div class="abstract-content">
+                <p>
+                    While modern Audio Large Language Models (LLMs) are increasingly strong at speech <em>content</em> (what is said), they still lag in paralinguistic and acoustic <em>understanding</em> — how something is said: speaker traits, expressive style, and recording conditions. Human listeners achieve far higher agreement on these dimensions than current frontier systems.
+                </p>
+                <p>
+                    We present <strong>ParA-LLM</strong>, a unified framework for paralinguistic and acoustic speech understanding built on a <strong>taxonomy of 22 characteristics</strong> and a <strong>large dataset of 1.2M+ audio–question answering pairs</strong> spanning acoustic, speaker, and speech properties. Training uses a <strong>two-stage curriculum</strong> — first on atomic single-attribute questions, then on multi-attribute questions to encourage joint reasoning.
+                </p>
+                <p>
+                    We introduce <strong>ParA-Bench</strong> (<strong>6,000</strong> MCQ items across speaker–speech, acoustic, and mixed categories), on which frontier systems such as <strong>GPT-4o-Audio reach about 36% overall accuracy</strong>, while <strong>ParA-LLM outperforms prior audio LLMs by 7.5% on ParA-Bench</strong>, with additional gains of <strong>+1.15% on MMAU-Pro (Speech)</strong> and <strong>+7.49% on MMAR (Speech)</strong> after curriculum training. A release of ParA-Bench, the model, and the dataset is stated in the paper.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contributions" class="contributions">
+        <div class="container">
+            <h2>Key contributions</h2>
+            <div class="contributions-grid">
+                <div class="contribution-card">
+                    <div class="contribution-icon">
+                        <i class="fas fa-database"></i>
+                    </div>
+                    <h3>Dataset &amp; taxonomy</h3>
+                    <p>Over 1.2M annotated audio–QA pairs with coverage across 22 paralinguistic and acoustic attributes (10 acoustic, 7 speaker, 5 speech).</p>
+                </div>
+                <div class="contribution-card">
+                    <div class="contribution-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>ParA-LLM</h3>
+                    <p>An audio LLM supporting free-form joint QA over multiple attributes, trained with atomic then multi-attribute curriculum.</p>
+                </div>
+                <div class="contribution-card">
+                    <div class="contribution-icon">
+                        <i class="fas fa-clipboard-check"></i>
+                    </div>
+                    <h3>ParA-Bench</h3>
+                    <p>6,000 hand-constructed multiple-choice items (2,000 each: speaker–speech, acoustic, mixed) with model-generated distractors for broad coverage.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="pipeline" class="pipeline-section">
+        <div class="container">
+            <h2>End-to-end pipeline</h2>
+            <p class="section-subtitle">Data simulation, annotation, QA generation, model training, and ParA-Bench construction — mirroring <strong>Figure 2</strong> in the paper.</p>
+            <div class="pipeline-diagram">
+                <img src="images/fig2-pipeline.png" alt="ParA-LLM data and training pipeline: clean audio sources, noise and RIR augmentation, DSP and metadata, Qwen-based ParA-LLM training, ParA-Bench MCQ" class="pipeline-image" loading="lazy" width="1200">
+                <p class="diagram-caption">Data sources (EARS, Expresso, VoxCeleb, and others), simulation with TAU Urban / MIT IR / OpenAIR, characteristic extraction, metadata JSON, and ParA-LLM + ParA-Bench outputs.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="methodology" class="section methodology-section">
+        <div class="container">
+            <h2>Methodology</h2>
+            <div class="method-grid">
+                <div>
+                    <h3>Data engine</h3>
+                    <p>Clean speech from EARS, Emilia, Expresso, VoxCeleb, and related corpora is augmented with room impulse responses, colored and recorded noise at varied SNR, and post effects (e.g. clipping, compression) to form realistic, reverberant, and noisy training audio.</p>
+                </div>
+                <div>
+                    <h3>Characteristics (22 total)</h3>
+                    <ul class="char-list">
+                        <li><strong>Acoustic (10):</strong> reverb and noise types, DRR/RT60 levels, overall quality (e.g. STOI bands), and related acoustic descriptors.</li>
+                        <li><strong>Speaker (7):</strong> gender, accent, nasality, timbre, loudness, smoothness, articulation.</li>
+                        <li><strong>Speech (5):</strong> emotion, speaking rate, pitch, expressivity, flow.</li>
+                    </ul>
+                </div>
+                <div>
+                    <h3>Training curriculum</h3>
+                    <p><strong>Stage 1</strong> uses ~688K <em>atomic</em> single-attribute QA pairs. <strong>Stage 2</strong> adds ~513K <em>multi-attribute</em> pairs (via Qwen2.5-7B ICL) for compositional reasoning. ParA-LLM is finetuned from Qwen2-Audio-7B-Instruct with LoRA (rank 128, α 256) as reported in the paper.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="results" class="section">
+        <div class="container">
+            <h2>Results</h2>
+            <p class="section-subtitle">ParA-LLM leads on ParA-Bench and benefits from the two-stage curriculum on downstream audio benchmarks.</p>
+
+            <div class="result-card highlight-bench">
+                <h3>ParA-Bench: overall (vs. GPT-4o-Audio)</h3>
+                <div class="bar-compare" aria-label="ParA-Bench overall accuracy">
+                    <div class="bar-row">
+                        <span class="bar-label">GPT-4o-Audio</span>
+                        <div class="bar-track"><div class="bar-fill bar-baseline" style="width:36.03%"></div></div>
+                        <span class="bar-pct">36.03%</span>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">ParA-LLM (ours)</span>
+                        <div class="bar-track"><div class="bar-fill bar-ours" style="width:43.53%"></div></div>
+                        <span class="bar-pct">43.53%</span>
+                    </div>
+                </div>
+                <p class="gain-note">≈7.5 percentage points absolute gain on overall ParA-Bench accuracy (paper Figure 1).</p>
+            </div>
+
+            <div id="parabench" class="pipeline-diagram" style="margin-top:2rem">
+                <h3 class="fig-heading">Table: ParA-Bench breakdown (from paper)</h3>
+                <img src="images/table1-bench.png" alt="Table 1: model accuracy on ParA-Bench by category" class="pipeline-image" loading="lazy" width="1000">
+                <p class="diagram-caption">Speaker–speech, acoustic, mixed, and overall columns — <strong>ParA-LLM (Ours)</strong> attains 55.85 / 34.80 / 39.95 / 43.53 in the published table.</p>
+            </div>
+
+            <div class="pipeline-diagram" style="margin-top:2rem">
+                <h3 class="fig-heading">Curriculum vs. baseline (Table 2)</h3>
+                <div class="table2-html" role="table" aria-label="Curriculum ablation on MMAU and MMAR">
+                    <div class="table2-row table2-head">
+                        <span>Model</span>
+                        <span title="MMAU-Pro (Speech)">MMAU-Pro (Sp.)</span>
+                        <span title="MMAR (Speech)">MMAR (Sp.)</span>
+                        <span title="MMAR (Sound–Speech)">MMAR (Snd–Sp.)</span>
+                        <span title="MMAR (Overall)">MMAR (all)</span>
+                    </div>
+                    <div class="table2-row">
+                        <span>Qwen2-Audio-Instruct</span>
+                        <span>40.96</span>
+                        <span>35.37</span>
+                        <span>40.83</span>
+                        <span>36.00</span>
+                    </div>
+                    <div class="table2-row">
+                        <span>ParA-LLM Stage 1</span>
+                        <span>41.98</span>
+                        <span>37.76</span>
+                        <span>45.87</span>
+                        <span>39.40</span>
+                    </div>
+                    <div class="table2-row table2-ours">
+                        <span>ParA-LLM Stage 2</span>
+                        <span><strong>42.09</strong></span>
+                        <span><strong>42.86</strong></span>
+                        <span><strong>46.33</strong></span>
+                        <span><strong>39.70</strong></span>
+                    </div>
+                </div>
+                <img src="images/table2-curriculum.png" alt="Table 2 as in paper" class="pipeline-image table2-screenshot" loading="lazy" width="1000">
+                <p class="diagram-caption">Stage 2 yields a large relative gain on MMAR (Speech) over the Qwen2-Audio baseline (e.g. +7.49 absolute, paper).</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="qualitative" class="examples-section">
+        <div class="container">
+            <h2>Qualitative example</h2>
+            <p class="section-subtitle">Comparing free-form paralinguistic description: GPT-4o-Audio vs. ParA-LLM (paper Figure 1, right panel).</p>
+            <div class="pipeline-diagram fig1-diagram">
+                <img src="images/fig1-main.png" alt="Figure 1: ParA-Bench overall bar chart and side-by-side QA" class="pipeline-image fig1-main" loading="lazy" width="900">
+            </div>
+            <div class="qa-compare" role="group" aria-label="Paraphrased model outputs">
+                <div class="qa-question">“What can you tell me about the speaker and their speaking style from the audio?”</div>
+                <div class="qa-cols">
+                    <div class="qa-panel error-panel">
+                        <h4><i class="fas fa-robot"></i> GPT-4o-Audio</h4>
+                        <p>Prone to concrete mistakes on the paper’s example (e.g. wrong accent, undershooting loudness) — <span class="bad">errors highlighted in red in the PDF</span>.</p>
+                    </div>
+                    <div class="qa-panel success-panel">
+                        <h4><i class="fas fa-wand-magic-sparkles"></i> ParA-LLM</h4>
+                        <p>Aligns better with the annotated attributes, including gender, accent, nasality, pitch, rate, and delivery (paper highlights in green).</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="applications" class="section dataset-section">
+        <div class="container">
+            <h2>Downstream uses</h2>
+            <div class="method-grid one-col">
+                <p><strong>Data annotation &amp; captioning</strong> — Perceptual metadata and descriptive captions for speech corpora and retrieval.</p>
+                <p><strong>Speech synthesis control</strong> — Attribute estimates (articulation, timbre, emotion) as structured control signals for TTS.</p>
+                <p><strong>Text-to-impulse-response (e.g. Gencho)</strong> — Natural language descriptions of acoustic spaces to supervise or condition IR generation (see paper and reference [35]).</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="bibtex" class="section bibtex-section">
+        <div class="container">
+            <h2>Citation</h2>
+            <p class="citation-hint">Update venue, year, and authors for the camera-ready version. Replace the GitHub/URL with your public materials.</p>
+            <div class="bibtex-container">
+                <pre class="bibtex-code"><code>@inproceedings{anonymous2026parallm,
+  title     = {ParA-LLM: A Unified Approach to Paralinguistic and Acoustic Speech Understanding},
+  author    = {Anonymous},
+  booktitle = {Proc. Interspeech},
+  year      = {2026},
+  note      = {Under review / anonymous submission; update when published}
+}</code></pre>
+                <button type="button" class="copy-btn" onclick="copyBibtex()">
+                    <i class="fas fa-copy"></i> Copy citation
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p>ParA-LLM — anonymous project page. External links in the header will be enabled after public release.</p>
+                <div class="footer-links">
+                    <a href="#abstract">Top</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

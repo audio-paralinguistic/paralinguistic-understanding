@@ -1,0 +1,18 @@
+{
+  "name": "para-llm-paper-website",
+  "version": "1.0.0",
+  "description": "Project page for ParA-LLM (Interspeech 2026)",
+  "main": "index.html",
+  "scripts": {
+    "start": "python3 -m http.server 8000",
+    "serve": "python3 serve.py",
+    "dev": "python3 -m http.server 3000"
+  },
+  "keywords": [
+    "paralinguistics",
+    "audio-llm",
+    "speech",
+    "Interspeech"
+  ],
+  "license": "Academic"
+}
